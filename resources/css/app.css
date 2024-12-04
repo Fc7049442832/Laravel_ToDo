@@ -1,0 +1,7 @@
+#AddForm {
+    display: none;
+    padding: 20px;
+    background-color: lightblue;
+    border: 1px solid blue;
+    margin-top: 20px;
+}
