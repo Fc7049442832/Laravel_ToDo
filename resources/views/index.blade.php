@@ -27,7 +27,8 @@
 <body>
     <h1>Student Data </h1>
     <button type="button" id="add-row">Add Row</button>
-    <form id="student-form">
+    <form id="student-form" action="{{route('students.store')}}" method="POST" enctype="multipart/form-data">
+        @csrf
         <table border="1" id="student-table">
             <thead>
                 <tr>
@@ -154,68 +155,68 @@
         });
 
         // Submit form data
-        $('#student-form').submit(function (e) {
-            e.preventDefault();
-            let formData = $(this).serialize();
-    console.log(formData); // Debug serialized data
+    //     $('#student-form').submit(function (e) {
+    //         e.preventDefault();
+    //         let formData = $(this).serialize();
+    // console.log(formData); // Debug serialized data
 
 
-            $.ajax({
-                url: "/students/store') }}",
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-                data: $(this).serialize(),
-                success: function (response) {
-                    alert(response.message);
-                    $('#student-table tbody').html(`
-                        <tr>
-                            <td><input type="text" name="students[0][name]" placeholder="Enter Name"></td>
-                            <td><input type="email" name="students[0][email]" placeholder="Enter Email"></td>
-                            <td><input type="text" name="students[0][phone]" placeholder="Enter Phone"></td>
-                            <td><input type="text" name="students[0][name]" placeholder="Enter Name"></td>
-                            <td><input type="email" name="students[0][email]" placeholder="Enter Email"></td>
-                            <td><input type="text" name="students[0][phone]" placeholder="Enter Phone"></td>
-                            <td><input type="text" name="students[0][age]" placeholder="Enter Age"></td>
-                            <td>
-                                <select name="students[0][gen]" id="">
-                                    <option value="M">Male</option>
-                                    <option value="F"> Female </option>
-                                </select>
-                            </td>
-                            <td><input type="text" name="students[0][city]" placeholder="Enter City"></td>
-                            <td><input type="text" name="students[0][pin]" placeholder="Enter Pin Code"></td>
+    //         // $.ajax({
+    //         //     url: "/students/store') }}",
+    //         //     method: 'POST',
+    //         //     headers: {
+    //         //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    //         //     }
+    //         //     data: formData,
+    //         //     success: function (response) {
+    //         //         alert(response.message);
+    //         //         $('#student-table tbody').html(`
+    //         //             <tr>
+    //         //                 <td><input type="text" name="students[0][name]" placeholder="Enter Name"></td>
+    //         //                 <td><input type="email" name="students[0][email]" placeholder="Enter Email"></td>
+    //         //                 <td><input type="text" name="students[0][phone]" placeholder="Enter Phone"></td>
+    //         //                 <td><input type="text" name="students[0][name]" placeholder="Enter Name"></td>
+    //         //                 <td><input type="email" name="students[0][email]" placeholder="Enter Email"></td>
+    //         //                 <td><input type="text" name="students[0][phone]" placeholder="Enter Phone"></td>
+    //         //                 <td><input type="text" name="students[0][age]" placeholder="Enter Age"></td>
+    //         //                 <td>
+    //         //                     <select name="students[0][gen]" id="">
+    //         //                         <option value="M">Male</option>
+    //         //                         <option value="F"> Female </option>
+    //         //                     </select>
+    //         //                 </td>
+    //         //                 <td><input type="text" name="students[0][city]" placeholder="Enter City"></td>
+    //         //                 <td><input type="text" name="students[0][pin]" placeholder="Enter Pin Code"></td>
 
                            
-                            <td><input type="text" name="students[0][university]" placeholder="Enter University"></td>
-                            <td><input type="text" name="students[0][college]" placeholder="Enter College"></td>
-                            <td>
-                                <select name="students[0][dept]" id="">
-                                    <option value="CS">Computer</option>
-                                    <option value="ME"> Mechnical </option>
-                                </select>
-                            </td>
+    //         //                 <td><input type="text" name="students[0][university]" placeholder="Enter University"></td>
+    //         //                 <td><input type="text" name="students[0][college]" placeholder="Enter College"></td>
+    //         //                 <td>
+    //         //                     <select name="students[0][dept]" id="">
+    //         //                         <option value="CS">Computer</option>
+    //         //                         <option value="ME"> Mechnical </option>
+    //         //                     </select>
+    //         //                 </td>
 
-                            <td><input type="text" name="students[0][batch]" placeholder="Enter Batch"></td>
-                            <td><input type="text" name="students[0][role]" placeholder="Enter Role No."></td>
-                            <td><input type="date" name="students[0][start]" placeholder="Start Date"></td>
-                            <td><input type="date" name="students[0][end]" placeholder="End Date"></td>
-                            <td><input type="text" name="students[0][subject]" placeholder="Enter Subject"></td>
-                            <td><input type="file" name="students[0][file]"></td>
+    //         //                 <td><input type="text" name="students[0][batch]" placeholder="Enter Batch"></td>
+    //         //                 <td><input type="text" name="students[0][role]" placeholder="Enter Role No."></td>
+    //         //                 <td><input type="date" name="students[0][start]" placeholder="Start Date"></td>
+    //         //                 <td><input type="date" name="students[0][end]" placeholder="End Date"></td>
+    //         //                 <td><input type="text" name="students[0][subject]" placeholder="Enter Subject"></td>
+    //         //                 <td><input type="file" name="students[0][file]"></td>
 
-                            <td><input type="text" name="students[0][fname]" placeholder="Enter Father Name"></td>
-                            <td><input type="text" name="students[0][mname]" placeholder="Enter Mother Name"></td>
-                            <td><button type="button" class="remove-row">Remove</button></td>
-                        </tr>
-                    `);
-                    rowIndex = 1;
-                },
-                error: function (error) {
-                    alert('Something went wrong!');
-                }
-            });
-        });
+    //         //                 <td><input type="text" name="students[0][fname]" placeholder="Enter Father Name"></td>
+    //         //                 <td><input type="text" name="students[0][mname]" placeholder="Enter Mother Name"></td>
+    //         //                 <td><button type="button" class="remove-row">Remove</button></td>
+    //         //             </tr>
+    //         //         `);
+    //         //         rowIndex = 1;
+    //         //     },
+    //         //     error: function (error) {
+    //         //         alert('Something went wrong!');
+    //         //     }
+    //         // });
+    //     });
     </script>
 </body>
 </html>

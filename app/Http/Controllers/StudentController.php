@@ -10,15 +10,25 @@ class StudentController extends Controller
    //   
    public function index()
    {
-       return view('index');
+       $students = Student::get();
+       return view('index', compact('students'));
    }
 
     // Data store
    public function store(Request $request)
    {
+    // dd($request->all());
        $students = $request->input('students');
 
        foreach ($students as $student) {
+
+           // Check if a file is uploaded for the current student
+            $filePath = null;
+            if (isset($student['file']) && $student['file'] instanceof \Illuminate\Http\UploadedFile) {
+                // Save the uploaded file and get the path
+                $filePath = $student['file']->store('uploads/students', 'public'); // Save in the 'uploads/students' folder in the 'public' disk
+            }
+       
            Student::create([
                'name' => $student['name'],
                'email' => $student['email'],
@@ -36,14 +46,14 @@ class StudentController extends Controller
                'start' => $student['start'],
                'end' => $student['end'],
                'subject'=> $student['subject'],
-               'file'=> $student['file'],
+               'file'=>  $filePath, 
 
                'fname'=> $student['fname'],
                'mname'=> $student['mname'],
            ]);
        }
 
-       return response()->json(['success' => true, 'message' => 'Students saved successfully!']);
+       return redirect()->route('home');
    }
 
 }
