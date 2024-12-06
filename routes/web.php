@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Controller;
+
+use App\Http\Controllers\StudentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,4 +19,8 @@ use App\Http\Controllers\Controller;
 //     return view('welcome');
 // });
 
-Route::get('/',[Controller::class,'index'])->name('home');
+
+
+Route::get('/', [StudentController::class, 'index']);
+
+Route::post('/student/store', [StudentController::class, 'store'])->name('students.store');
