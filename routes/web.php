@@ -19,8 +19,15 @@ use App\Http\Controllers\StudentController;
 //     return view('welcome');
 // });
 
+route::view('/demo', 'welcome');
 
 
 Route::get('/', [StudentController::class, 'index'])->name('home');
 
-Route::post('/student/store', [StudentController::class, 'store'])->name('students.store');
+Route::post('/student/store', [StudentController::class, 'storeOrUpdate'])->name('students.store');
+
+Route::post('/student/save/{id}', [StudentController::class, 'update'])->name('student.update');
+
+//Route::delete('/form-data/{id}', [StudentController::class, 'deleteFormData'])->name('deleteFormData');
+
+Route::post('/form-data/delete/{id}', [StudentController::class, 'deleteFormData'])->name('deleteFormData');

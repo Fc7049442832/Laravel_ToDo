@@ -26,6 +26,6 @@ class Student extends Model
 
         'university', 'college', 'dept', 'batch', 'role', 'start', 'end', 'subject', 'file', // File path or name
 
-        'fname', 'mname', // Father's and Mother's name
+        'fname', 'mname', 'updateKey', 
     ];
 }

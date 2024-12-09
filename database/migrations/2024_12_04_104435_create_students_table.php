@@ -31,6 +31,7 @@ return new class extends Migration
             $table->string('file')->nullable(); // File path or name
             $table->string('fname')->nullable(); // Father's name
             $table->string('mname')->nullable(); // Mother's name
+            $table->string('update_key')->nullable(); 
             $table->timestamps(); // Adds created_at and updated_at
    
         });
