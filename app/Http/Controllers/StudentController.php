@@ -19,54 +19,83 @@ class StudentController extends Controller
     // store and update data function
    public function storeOrUpdate(Request $request)
    {
+
+        
         // Validate the request to ensure files and other inputs are properly formatted
         $request->validate([
             'students.*.file' => 'nullable|file',
-            'students.*.phone' => 'required|digits:10', // Mobile number must be 10 digits
-            'students.*.pin' => 'required|digits:6',   // Pin code must be 6 digits
+            // 'students.*.phone' => 'required|digits:10', // Mobile number must be 10 digits
+            // 'students.*.pin' => 'required|digits:6',   // Pin code must be 6 digits
         ]);
 
        // Get all student data from the request
        $students = $request->input('students',[]);
        
-       foreach ($students as $index =>  $student) {
-           // Check if a student with the given email already exists
-          
-           
-            $existingStudent = Student::where('email', $student['email'])->first();
-   
-            if (!$existingStudent) {
-
-                 // Handle file upload using the private function
-                $filePath = null;
-                if ($request->hasFile("students.{$index}.file")) {
-                    $filePath = $this->handleFileUpload($request->file("students.{$index}.file"));
-                }
-
-                // Create a new student record
-                Student::create([
-                    'name' => $student['name'],
-                    'email' => $student['email'],
-                    'phone' => $student['phone'],
-                    'age' => $student['age'],
-                    'gen' => $student['gen'],
-                    'city' => $student['city'],
-                    'pin' => $student['pin'],
-                    'university' => $student['university'],
-                    'college' => $student['college'],
-                    'dept' => $student['dept'],
-                    'batch' => $student['batch'],
-                    'role' => $student['role'],
-                    'start' => $student['start'],
-                    'end' => $student['end'],
-                    'subject' => $student['subject'],
-                    'file' => $filePath,
-                    'fname' => $student['fname'],
-                    'mname' => $student['mname'],
-                ]);
+       foreach ($students as $index => $student) {
+        // Check if a student with the given email already exists
+        $existingStudent = Student::where('email', $student['email'])->first();
     
-            } 
-       }
+        // If the student exists and updateKey is 1, update the record
+        if ( $student['updateKey'] == 1) {
+            // Handle file upload
+            $filePath = $existingStudent->file; // Default to the existing file path
+            if ($request->hasFile("students.{$index}.file")) {
+                $filePath = $this->handleFileUpload($request->file("students.{$index}.file"));
+            }
+    
+            // Update the student record
+            $existingStudent->update([
+                'name' => $student['name'],
+                'phone' => $student['phone'],
+                'age' => $student['age'],
+                'gen' => $student['gen'],
+                'city' => $student['city'],
+                'pin' => $student['pin'],
+                'university' => $student['university'],
+                'college' => $student['college'],
+                'dept' => $student['dept'],
+                'batch' => $student['batch'],
+                'role' => $student['role'],
+                'start' => $student['start'],
+                'end' => $student['end'],
+                'subject' => $student['subject'],
+                'file' => $filePath,
+                'fname' => $student['fname'],
+                'mname' => $student['mname'],
+            ]);
+        } 
+        // If the student doesn't exist, create a new record
+        elseif (!$existingStudent) {
+            // Handle file upload
+            $filePath = null;
+            if ($request->hasFile("students.{$index}.file")) {
+                $filePath = $this->handleFileUpload($request->file("students.{$index}.file"));
+            }
+    
+            // Create a new student record
+            Student::create([
+                'name' => $student['name'],
+                'email' => $student['email'],
+                'phone' => $student['phone'],
+                'age' => $student['age'],
+                'gen' => $student['gen'],
+                'city' => $student['city'],
+                'pin' => $student['pin'],
+                'university' => $student['university'],
+                'college' => $student['college'],
+                'dept' => $student['dept'],
+                'batch' => $student['batch'],
+                'role' => $student['role'],
+                'start' => $student['start'],
+                'end' => $student['end'],
+                'subject' => $student['subject'],
+                'file' => $filePath,
+                'fname' => $student['fname'],
+                'mname' => $student['mname'],
+            ]);
+        }
+    }
+    
    
        return redirect()->route('home')->with('success', 'Students added or updated successfully');
    }

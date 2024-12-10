@@ -120,41 +120,41 @@
                         <input type="hidden" name="" value="{{ $student->id ?? '' }}">
                         <input type="hidden" name="students[{{ $key }}][updateKey]" class="update-key" value="0">
                         <td>{{$key +1}}</td>
-                        <td><input type="text" name="students[{{ $key }}][name]" value="{{ $student->name }}" placeholder="Enter Name"></td>
-                        <td><input type="email" name="students[{{ $key }}][email]" value="{{ $student->email }}" placeholder="Enter Email"></td>
-                        <td><input type="number" name="students[{{ $key }}][phone]" value="{{ $student->phone }}" placeholder="Enter Phone"></td>
-                        <td><input type="text" name="students[{{ $key }}][age]" value="{{ $student->age }}" placeholder="Enter Age"></td>
+                        <td><input type="text" name="students[{{ $key }}][name]" value="{{ $student->name }}" class="editable-field" placeholder="Enter Name"></td>
+                        <td><input type="email" name="students[{{ $key }}][email]" value="{{ $student->email }}" class="editable-field" placeholder="Enter Email"></td>
+                        <td><input type="number" name="students[{{ $key }}][phone]" value="{{ $student->phone }}" class="editable-field" placeholder="Enter Phone"></td>
+                        <td><input type="number" name="students[{{ $key }}][age]" value="{{ $student->age }}" class="editable-field" placeholder="Enter Age"></td>
                         <td>
-                            <select name="students[{{ $key }}][gen]">
+                            <select name="students[{{ $key }}][gen]" class="editable-field" >
                                 <option value="M" {{ $student->gen == 'M' ? 'selected' : '' }}>Male</option>
                                 <option value="F" {{ $student->gen == 'F' ? 'selected' : '' }}>Female</option>
                             </select>
                         </td>
-                        <td><input type="text" name="students[{{ $key }}][city]" value="{{ $student->city }}" placeholder="Enter City"></td>
-                        <td><input type="number" name="students[{{ $key }}][pin]" value="{{ $student->pin }}" placeholder="Enter Pin Code"></td>
+                        <td><input type="text" name="students[{{ $key }}][city]" value="{{ $student->city }}" class="editable-field" placeholder="Enter City"></td>
+                        <td><input type="number" name="students[{{ $key }}][pin]" value="{{ $student->pin }}" class="editable-field" placeholder="Enter Pin Code"></td>
 
                         {{-- College Details --}}
-                        <td><input type="text" name="students[{{ $key }}][university]" value="{{ $student->university }}" placeholder="Enter University"></td>
-                        <td><input type="text" name="students[{{ $key }}][college]" value="{{ $student->college }}" placeholder="Enter College"></td>
+                        <td><input type="text" name="students[{{ $key }}][university]" value="{{ $student->university }}" class="editable-field" placeholder="Enter University"></td>
+                        <td><input type="text" name="students[{{ $key }}][college]" value="{{ $student->college }}" class="editable-field" placeholder="Enter College"></td>
                         <td>
-                            <select name="students[{{ $key }}][dept]">
+                            <select name="students[{{ $key }}][dept]" class="editable-field" >
                                 <option value="CS" {{ $student->dept == 'CS' ? 'selected' : '' }}>Computer</option>
                                 <option value="ME" {{ $student->dept == 'ME' ? 'selected' : '' }}>Mechanical</option>
                             </select>
                         </td>
-                        <td><input type="text" name="students[{{ $key }}][batch]" value="{{ $student->batch }}" placeholder="Enter Batch"></td>
-                        <td><input type="text" name="students[{{ $key }}][role]" value="{{ $student->role }}" placeholder="Enter Role No."></td>
-                        <td><input type="date" name="students[{{ $key }}][start]" value="{{ $student->start }}" placeholder="Start Date"></td>
-                        <td><input type="date" name="students[{{ $key }}][end]" value="{{ $student->end }}" placeholder="End Date"></td>
-                        <td><input type="text" name="students[{{ $key }}][subject]" value="{{ $student->subject }}" placeholder="Enter Subject"></td>
+                        <td><input type="text" name="students[{{ $key }}][batch]" value="{{ $student->batch }}" class="editable-field" placeholder="Enter Batch"></td>
+                        <td><input type="text" name="students[{{ $key }}][role]" value="{{ $student->role }}" class="editable-field" placeholder="Enter Role No."></td>
+                        <td><input type="date" name="students[{{ $key }}][start]" value="{{ $student->start }}" class="editable-field" placeholder="Start Date"></td>
+                        <td><input type="date" name="students[{{ $key }}][end]" value="{{ $student->end }}" class="editable-field" placeholder="End Date"></td>
+                        <td><input type="text" name="students[{{ $key }}][subject]" value="{{ $student->subject }}" class="editable-field" placeholder="Enter Subject"></td>
                         @if(isset($student->file))
                         <td><a href="{{asset('storage/'.$student->file)}}" target="_blank" rel="noopener noreferrer">Attachment</a></td>
                         @else
-                        <td><input type="file" name="students[{{ $key }}][file]"></td>
+                        <td><input type="file" name="students[{{ $key }}][file]"class="editable-field" ></td>
                         @endif
                         {{-- Other Details --}}
-                        <td><input type="text" name="students[{{ $key }}][fname]" value="{{ $student->fname }}" placeholder="Enter Father Name"></td>
-                        <td><input type="text" name="students[{{ $key }}][mname]" value="{{ $student->mname }}" placeholder="Enter Mother Name"></td>
+                        <td><input type="text" name="students[{{ $key }}][fname]" value="{{ $student->fname }}" class="editable-field" placeholder="Enter Father Name"></td>
+                        <td><input type="text" name="students[{{ $key }}][mname]" value="{{ $student->mname }}" class="editable-field" placeholder="Enter Mother Name"></td>
                         <td>
                             <button type="submit">Update</button>
                         
@@ -167,9 +167,10 @@
                     @endforeach
                 </tbody>
             </table>
-        </div>
+       
             <button type="submit" class="btn bg-success">Save & Update</button>
         </form>
+    </div>
     
     <script>
     let rowIndex = {{$key + 2}}; // Initialize rowIndex
@@ -184,6 +185,7 @@
                 <tr>   
                     {{-- Personal Details --}}
                     <td> ${rowIndex} </td>
+                     <input type="hidden" name="students[{{ $key }}][updateKey]" class="update-key" value="0">
                     <td>
                         <input type="text" name="students[${rowIndex}][name]" placeholder="Enter Name">
                         <span class="danger" id="students_${rowIndex}_name_error"></span>
@@ -193,11 +195,11 @@
                         <span class="danger" id="students_${rowIndex}_email_error"></span>
                     </td>
                     <td>
-                        <input type="text" name="students[${rowIndex}][phone]" placeholder="Enter Phone">
+                        <input type="number" name="students[${rowIndex}][phone]" placeholder="Enter Phone">
                         <span class="danger" id="students_${rowIndex}_phone_error"></span>
                     </td>
                     <td>
-                        <input type="text" name="students[${rowIndex}][age]" placeholder="Enter Age">
+                        <input type="number" name="students[${rowIndex}][age]" placeholder="Enter Age">
                         <span class="danger" id="students_${rowIndex}_age_error"></span>
                     </td>
                     <td>
@@ -212,7 +214,7 @@
                         <span class="danger" id="students_${rowIndex}_city_error"></span>
                     </td>
                     <td>
-                        <input type="text" name="students[${rowIndex}][pin]" placeholder="Enter Pin Code">
+                        <input type="number" name="students[${rowIndex}][pin]" placeholder="Enter Pin Code">
                         <span class="danger" id="students_${rowIndex}_pin_error"></span>
                     </td>
 
@@ -234,11 +236,11 @@
                     </td>
 
                     <td>
-                        <input type="text" name="students[${rowIndex}][batch]" placeholder="Enter Batch">
+                        <input type="number" name="students[${rowIndex}][batch]" placeholder="Enter Batch">
                         <span class="danger" id="students_${rowIndex}_batch_error"></span>
                     </td>
                     <td>
-                        <input type="text" name="students[${rowIndex}][role]" placeholder="Enter Role No.">
+                        <input type="number" name="students[${rowIndex}][role]" placeholder="Enter Role No.">
                         <span class="danger" id="students_${rowIndex}_role_error"></span>
                     </td>
                     <td>
@@ -285,8 +287,26 @@
     $(document).on('click', '.remove-row', function () {
         $(this).closest('tr').remove();
     });   
+   
+     // Use jQuery or vanilla JS to handle changes
+     document.addEventListener('DOMContentLoaded', function () {
+        const fields = document.querySelectorAll('.editable-field');
+
+        fields.forEach(field => {
+            field.addEventListener('change', function () {
+                const parentRow = this.closest('tr');
+                const updateKeyField = parentRow.querySelector('.update-key');
+
+                // Set updateKey value to 1
+                updateKeyField.value = 1;
+
+                // Change the background color of the field to yellow
+                this.style.backgroundColor = 'yellow';
+            });
+        });
+    });
     
-    
+
     </script>
 </body>
 </html>
