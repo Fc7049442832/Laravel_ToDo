@@ -64,6 +64,7 @@
         $student = null;
     @endphp
 
+
     <form id="student-form" action="{{ $student ? route('student.update', $student->id) : route('students.store')}}" method="POST" enctype="multipart/form-data">
         @csrf
         <table border="1" id="student-table">
@@ -101,6 +102,7 @@
                     {{-- Personal Details --}}
                      <!-- Hidden field to store update key -->
                     <input type="hidden" name="" value="{{ $student->id ?? '' }}">
+                    <input type="hidden" name="updateKey" >
                     
                     <td><input type="text" name="students[{{ $key }}][name]" value="{{ $student->name }}" placeholder="Enter Name"></td>
                     <td><input type="email" name="students[{{ $key }}][email]" value="{{ $student->email }}" placeholder="Enter Email"></td>
