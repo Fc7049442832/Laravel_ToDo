@@ -59,6 +59,12 @@
 <body>
     <h1>Student Data </h1>
     <button type="button" class="btn" id="add-row">Add Row</button>
+    {{--  All data delete Button --}}
+    <form id="delete-form" action="{{ route('deleteAllDataWithPassword') }}" method="POST">
+        @csrf
+        <button type="button" id="delete-button" class="btn btn-danger">Delete All Data</button>
+    </form>
+    
     @session('error')
         <b><span class="danger" >{{ session('error') }}</span></b>
     @endsession
@@ -117,11 +123,11 @@
                     <tr>   
                         {{-- Personal Details --}}
                         <!-- Hidden field to store update key -->
-                        <input type="hidden" name="" value="{{ $student->id ?? '' }}">
+                        <input type="hidden" name="id" value="{{ $student->id ?? '' }}">
                         <input type="hidden" name="students[{{ $key }}][updateKey]" class="update-key" value="0">
                         <td>{{$key +1}}</td>
                         <td><input type="text" name="students[{{ $key }}][name]" value="{{ $student->name }}" class="editable-field" placeholder="Enter Name"></td>
-                        <td><input type="email" name="students[{{ $key }}][email]" value="{{ $student->email }}" class="editable-field" placeholder="Enter Email"></td>
+                        <td><input type="email" name="students[{{ $key }}][email]" value="{{ $student->email }}" class="editable-field"   readonly></td>
                         <td><input type="number" name="students[{{ $key }}][phone]" value="{{ $student->phone }}" class="editable-field" placeholder="Enter Phone"></td>
                         <td><input type="number" name="students[{{ $key }}][age]" value="{{ $student->age }}" class="editable-field" placeholder="Enter Age"></td>
                         <td>
@@ -173,7 +179,7 @@
     </div>
     
     <script>
-    let rowIndex = {{$key + 2}}; // Initialize rowIndex
+    let rowIndex = {{ isset($key) ? $key + 2 : 1 }};; // Initialize rowIndex
 
           $('#add-row').click(function () {
             // Get today's date in the required format (YYYY-MM-DD)
@@ -185,7 +191,7 @@
                 <tr>   
                     {{-- Personal Details --}}
                     <td> ${rowIndex} </td>
-                     <input type="hidden" name="students[{{ $key }}][updateKey]" class="update-key" value="0">
+                     <input type="hidden" name="students[{{isset($key) ? $key : 1 }}][updateKey]" class="update-key" value="0">
                     <td>
                         <input type="text" name="students[${rowIndex}][name]" placeholder="Enter Name">
                         <span class="danger" id="students_${rowIndex}_name_error"></span>
@@ -306,6 +312,31 @@
         });
     });
     
+
+    // All data delete js Function
+    document.getElementById('delete-button').addEventListener('click', function () {
+        // Step 1: Confirm the action
+        const confirmDelete = confirm('Are you sure you want to delete all data? This action is irreversible.');
+
+        if (confirmDelete) {
+            // Step 2: Prompt for password
+            const password = prompt('Enter your password to confirm:');
+
+            if (password) {
+                // Step 3: Add the password to the form and submit
+                const form = document.getElementById('delete-form');
+                const passwordInput = document.createElement('input');
+                passwordInput.type = 'hidden';
+                passwordInput.name = 'password';
+                passwordInput.value = password;
+
+                form.appendChild(passwordInput);
+                form.submit();
+            } else {
+                alert('Password is required to proceed.');
+            }
+        }
+    });
 
     </script>
 </body>

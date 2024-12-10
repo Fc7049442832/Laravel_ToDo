@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Student;
+use Illuminate\Support\Facades\DB;
 
 class StudentController extends Controller
 {
@@ -36,7 +37,7 @@ class StudentController extends Controller
         $existingStudent = Student::where('email', $student['email'])->first();
     
         // If the student exists and updateKey is 1, update the record
-        if ( $student['updateKey'] == 1) {
+        if (  $existingStudent && $student['updateKey'] == 1) {
             // Handle file upload
             $filePath = $existingStudent->file; // Default to the existing file path
             if ($request->hasFile("students.{$index}.file")) {
@@ -123,6 +124,27 @@ class StudentController extends Controller
         }
         return null;
     }
+
+    // Student all data Delete only single click
+    public function deleteAllData(Request $request)
+    {
+         // Step 1: Validate the password input
+         $password = $request->input('password');
+
+         if ($password !== '12345678') { // Replace 'your_secure_password' with your actual password logic
+             return redirect()->back()->with('error', 'Incorrect password. Data deletion aborted.');
+         }
+ 
+         try {
+             // Step 2: Truncate the required tables
+             \DB::table('students')->truncate();
+
+             return redirect()->back()->with('success', 'All data has been deleted successfully.');
+         } catch (\Exception $e) {
+             return redirect()->back()->with('error', 'Failed to delete data: ' . $e->getMessage());
+         }
+     }
+    
 
 }
    

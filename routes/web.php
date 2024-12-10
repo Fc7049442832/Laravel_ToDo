@@ -15,19 +15,11 @@ use App\Http\Controllers\StudentController;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-route::view('/demo', 'welcome');
-
-
+// Home Page Route 
 Route::get('/', [StudentController::class, 'index'])->name('home');
-
+// Student Data Store & update
 Route::post('/student/store', [StudentController::class, 'storeOrUpdate'])->name('students.store');
-
-Route::post('/student/save/{id}', [StudentController::class, 'update'])->name('student.update');
-
-//Route::delete('/form-data/{id}', [StudentController::class, 'deleteFormData'])->name('deleteFormData');
-
+// Student Data Delete one by one
 Route::post('/form-data/delete/{id}', [StudentController::class, 'deleteFormData'])->name('deleteFormData');
+// Student all Data Delete in single click
+Route::post('/delete-all-data-with-password/delete', [StudentController::class, 'deleteAllData'])->name('deleteAllDataWithPassword');
