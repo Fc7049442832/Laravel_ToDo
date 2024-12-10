@@ -19,10 +19,9 @@ class StudentController extends Controller
     // store and update data function
    public function storeOrUpdate(Request $request)
    {
-
         // Validate the request to ensure files and other inputs are properly formatted
         $request->validate([
-            'students.*.file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'students.*.file' => 'nullable|file',
             'students.*.phone' => 'required|digits:10', // Mobile number must be 10 digits
             'students.*.pin' => 'required|digits:6',   // Pin code must be 6 digits
         ]);
