@@ -153,11 +153,25 @@
                         <td><input type="date" name="students[{{ $key }}][start]" value="{{ $student->start }}" class="editable-field" placeholder="Start Date"></td>
                         <td><input type="date" name="students[{{ $key }}][end]" value="{{ $student->end }}" class="editable-field" placeholder="End Date"></td>
                         <td><input type="text" name="students[{{ $key }}][subject]" value="{{ $student->subject }}" class="editable-field" placeholder="Enter Subject"></td>
-                        @if(isset($student->file))
-                        <td><a href="{{asset('storage/'.$student->file)}}" target="_blank" rel="noopener noreferrer">Attachment</a></td>
+                        @if(isset($student->file) && is_array(json_decode($student->file, true)))
+                            <td>
+                                @foreach(json_decode($student->file, true) as $index => $filePath)
+                                        <div>
+                                            <a href="{{ asset('storage/' . $filePath) }}" target="_blank" rel="noopener noreferrer">Attachment {{ $index + 1 }}</a>
+                                            <form action="{{ route('student.file.delete', ['id' => $student->id, 'fileIndex' => $index]) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this file?')">Delete</button>
+                                            </form>
+                                        </div>
+                                @endforeach
+                                <input type="file" name="students[{{ $key }}][file][]" class="editable-field" multiple>
+                            </td>
                         @else
-                        <td><input type="file" name="students[{{ $key }}][file]"class="editable-field" ></td>
-                        @endif
+                            <td>
+                                <input type="file" name="students[{{ $key }}][file][]" class="editable-field" multiple>
+                            </td>
+                        @endif      
                         {{-- Other Details --}}
                         <td><input type="text" name="students[{{ $key }}][fname]" value="{{ $student->fname }}" class="editable-field" placeholder="Enter Father Name"></td>
                         <td><input type="text" name="students[{{ $key }}][mname]" value="{{ $student->mname }}" class="editable-field" placeholder="Enter Mother Name"></td>
@@ -259,8 +273,8 @@
                         <input type="text" name="students[${rowIndex}][subject]" placeholder="Enter Subject">
                         <span class="danger" id="students_${rowIndex}_subject_error"></span>
                     </td>
-                    <td>
-                        <input type="file" name="students[${rowIndex}][file]">
+                   <td>
+                        <input type="file" name="students[${rowIndex}][file][]" multiple>
                         <span class="danger" id="students_${rowIndex}_file_error"></span>
                     </td>
 
