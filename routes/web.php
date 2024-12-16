@@ -23,5 +23,5 @@ Route::post('/student/store', [StudentController::class, 'storeOrUpdate'])->name
 Route::post('/form-data/delete/{id}', [StudentController::class, 'deleteFormData'])->name('deleteFormData');
 // Student all Data Delete in single click
 Route::post('/delete-all-data-with-password/delete', [StudentController::class, 'deleteAllData'])->name('deleteAllDataWithPassword');
-// Student file one by one Delete Route
-Route::delete('/students/{id}/file/{fileIndex}', [StudentController::class, 'deleteFile'])->name('student.file.delete');
+// Student file one by one Delete Route 
+Route::delete('/students/delete/{id}/file/{fileIndex}', [StudentController::class, 'deleteFile'])->name('student.file.delete');

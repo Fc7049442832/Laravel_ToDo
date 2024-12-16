@@ -18,10 +18,10 @@ class StudentController extends Controller
    }
 
 
-    // Store and update data function
+   // Store and update data function
     public function storeOrUpdate(Request $request)
     {
-        // Validate the request to ensure files and other inputs are properly formatted
+        // Validate the request
         $request->validate([
             'students.*.file' => 'nullable|array',
             'students.*.file.*' => 'nullable|file', // Each file must be a valid file
@@ -43,6 +43,19 @@ class StudentController extends Controller
 
             // If the student exists and updateKey is 1, update the record
             if ($existingStudent && $student['updateKey'] == 1) {
+                // Retrieve existing file data from the database
+                $existingFiles = json_decode($existingStudent->file, true) ?? [];
+
+                // Handle new file uploads
+                if ($request->hasFile("students.{$index}.newFiles")) {
+                    $newFiles = $request->file("students.{$index}.newFiles");
+                    $newFilePaths = $this->handleMultiFileUpload($newFiles);
+                    $filePaths = array_merge($existingFiles, $newFilePaths); // Merge existing and new file paths
+                } else {
+                    $filePaths = $existingFiles; // Keep existing files if no new files are uploaded
+                }
+
+                // Update the student record
                 $existingStudent->update([
                     'name' => $student['name'],
                     'phone' => $student['phone'],
@@ -58,11 +71,11 @@ class StudentController extends Controller
                     'start' => $student['start'],
                     'end' => $student['end'],
                     'subject' => $student['subject'],
-                    'file' => json_encode($filePaths), // Save file paths as JSON if multiple files
+                    'file' => json_encode($filePaths), // Save merged file paths as JSON
                     'fname' => $student['fname'],
                     'mname' => $student['mname'],
                 ]);
-            }
+            } 
             // If the student doesn't exist, create a new record
             elseif (!$existingStudent) {
                 Student::create([
@@ -81,7 +94,7 @@ class StudentController extends Controller
                     'start' => $student['start'],
                     'end' => $student['end'],
                     'subject' => $student['subject'],
-                    'file' => json_encode($filePaths), // Save file paths as JSON if multiple files
+                    'file' => json_encode($filePaths), // Save new file paths as JSON
                     'fname' => $student['fname'],
                     'mname' => $student['mname'],
                 ]);
@@ -90,6 +103,7 @@ class StudentController extends Controller
 
         return redirect()->route('home')->with('success', 'Students added or updated successfully');
     }
+
 
 
     // Data Delete Function 
@@ -121,7 +135,9 @@ class StudentController extends Controller
     
         return $uploadedPaths;
     }
-    // student file delete one by one function
+ 
+
+    // student file delete one by one
     public function deleteFile($id, $fileIndex)
     {
         // Find the student

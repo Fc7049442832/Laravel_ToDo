@@ -160,13 +160,13 @@
                                             <a href="{{ asset('storage/' . $filePath) }}" target="_blank" rel="noopener noreferrer">Attachment {{ $index + 1 }}</a>
                                             <form action="{{ route('student.file.delete', ['id' => $student->id, 'fileIndex' => $index]) }}" method="POST" style="display:inline;">
                                                 @csrf
-                                                @method('DELETE')
                                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this file?')">Delete</button>
                                             </form>
                                         </div>
-                                @endforeach
-                                <input type="file" name="students[{{ $key }}][file][]" class="editable-field" multiple>
+                                @endforeach 
+                                <input type="file" name="students[{{ $key }}][newFiles][]" class="editable-field form-control" multiple>
                             </td>
+                            
                         @else
                             <td>
                                 <input type="file" name="students[{{ $key }}][file][]" class="editable-field" multiple>
