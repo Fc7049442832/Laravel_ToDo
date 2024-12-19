@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Table</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <style>
         table{
@@ -13,7 +14,7 @@
             overflow-x: scroll;
         }
         th, td {
-        padding: 5px;
+         padding: 5px;
         
         }
         td input, select{
@@ -52,13 +53,97 @@
             overflow: hidden;
             overflow-x: scroll;
         }
+        .button {
+        padding: 10px 20px;
+        font-size: 16px;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        }
+        .button:hover {
+        background-color: #0056b3;
+        }
+        .visualization {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-width: 800px;
+        height: 80%;
+        overflow: hidden;
+        overflow-y: scroll;
+        background: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        text-align: center;
+        border-radius: 10px;
+        }
+        .close-btn {
+        margin-top: 10px;
+        padding: 10px 20px;
+        font-size: 14px;
+        background-color: #dc3545;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        }
+        .close-btn:hover {
+        background-color: #a71d2a;
+        }
+
+        .chart-container {
+        margin: 20px 0;
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        canvas {
+        max-width: 100%;
+        height: auto;
+        }
     </style>
-
-
 </head>
 <body>
     <h1>Student Data </h1>
+    {{-- row add button --}}
     <button type="button" class="btn" id="add-row">Add Row</button>
+    {{-- Data visualization button --}}
+    <button class="button" onclick="showVisualization()">Show Visualization</button>
+
+    <div id="visualization" class="visualization">
+        <h2>Studdents Data Visualization</h2>
+        <hr>
+         <div class="chart-container">
+            <h2>Bar Chart: Students by Age</h2>
+            <canvas id="ageChart"></canvas>
+          </div>
+        
+          <div class="chart-container">
+            <h2>Bar Chart Horizontal: Gender Distribution</h2>
+            <canvas id="genderChart"></canvas>
+          </div>
+        
+          <div class="chart-container" style="max-width: 400px; margin: 0 auto;">
+            <h2>Bubble Chart: Students by Department</h2>
+            <canvas id="departmentChart"></canvas>
+          </div>
+        
+          <div class="chart-container" style="max-width: 400px; margin: 0 auto;">
+            <h2>Pie Chart: Attachments Distribution</h2>
+            <canvas id="attachmentChart"></canvas>
+          </div>
+        <hr>
+        <button class="close-btn" onclick="closeVisualization()">Close</button>
+    </div>
+
+
+
     {{--  All data delete Button --}}
     <form id="delete-form" action="{{ route('deleteAllDataWithPassword') }}" method="POST">
         @csrf
@@ -119,6 +204,10 @@
                 </thead>
                 <tbody>
                     {{-- Data fetch in database --}}
+                    @php
+                        $studentFile =0;
+                        $nullAttachments =0;
+                    @endphp
                     @foreach ($students as $key => $student)
                     <tr>   
                         {{-- Personal Details --}}
@@ -153,7 +242,8 @@
                         <td><input type="date" name="students[{{ $key }}][start]" value="{{ $student->start }}" class="editable-field" placeholder="Start Date"></td>
                         <td><input type="date" name="students[{{ $key }}][end]" value="{{ $student->end }}" class="editable-field" placeholder="End Date"></td>
                         <td><input type="text" name="students[{{ $key }}][subject]" value="{{ $student->subject }}" class="editable-field" placeholder="Enter Subject"></td>
-                        @if(isset($student->file) && is_array(json_decode($student->file, true)))
+                        @if(isset($student->file) && is_array(json_decode($student->file, true)) && count(json_decode($student->file, true)) >= 1)
+                          {{ $studentFile ++ }}
                             <td>
                                 @foreach(json_decode($student->file, true) as $index => $filePath)
                                         <div>
@@ -168,6 +258,7 @@
                             </td>
                             
                         @else
+                            {{ $nullAttachments ++ }}
                             <td>
                                 <input type="file" name="students[{{ $key }}][file][]" class="editable-field" multiple>
                             </td>
@@ -351,6 +442,193 @@
             }
         }
     });
+
+    //  Data visualization section
+    function showVisualization() {
+      const visualization = document.getElementById('visualization');
+      visualization.style.display = 'block';
+    }
+
+    function closeVisualization() {
+      const visualization = document.getElementById('visualization');
+      visualization.style.display = 'none';
+    }
+
+    // Get the PHP data into JavaScript
+    const rawData = @json($students);
+
+    // Initialize age groups
+    const ageGroups = {
+            '15-20': 0,
+            '21-25': 0,
+            '25-30': 0,
+            '31+': 0,
+        };
+
+    // Categorize ages dynamically
+    rawData.forEach(student => {
+            const age = student.age;
+            if (age >= 15 && age <= 20) {
+                ageGroups['15-20']++;
+            } else if (age >= 21 && age <= 25) {
+                ageGroups['21-25']++;
+            } else if (age >= 26 && age <= 30) {
+                ageGroups['25-30']++;
+            } else if (age >= 31) {
+                ageGroups['31+']++;
+            }
+        });
+    
+    // Prepare data for Chart.js
+    const labels = Object.keys(ageGroups);
+    const Agedata = Object.values(ageGroups);
+     // Bar Chart: Students by Age
+     const ageData = {
+      labels: labels, // Dynamic Age labels 
+      datasets: [{
+        label: 'Number of Students',
+        data: Agedata, // Number of students per age
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
+      }]
+    };
+    const ageChart = new Chart(document.getElementById('ageChart'), {
+      type: 'bar',
+      data: ageData,
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+
+    let male = 0;
+    let female = 0;
+    // Gender by student number
+    rawData.forEach(student => {
+        if (student.gen === 'M') {
+            male++;
+        } else if (student.gen === 'F') {
+            female++;
+        }
+    });
+
+    const genderData = {
+        labels: ['Male', 'Female'], // Labels for the gender categories
+        datasets: [{
+            label: 'Male',
+            data: [male], // Use 'male' variable here
+            backgroundColor: 'rgba(54, 162, 235, 0.8)' // Color for Male
+        }, {
+            label: 'Female',
+            data: [female], // Use 'female' variable here
+            backgroundColor: 'rgba(255, 99, 132, 0.8)' // Color for Female
+        }]
+    };
+    const genderChart = new Chart(document.getElementById('genderChart'), {
+            type: 'bar', // Change the chart type to 'bar'
+            data: genderData,
+            options: {
+                responsive: true,
+                indexAxis: 'y', // Set the bar chart to horizontal
+                scales: {
+                    x: {
+                        beginAtZero: true, // Make sure the x-axis starts from zero
+                        title: {
+                            display: true,
+                            text: 'Number of Students'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Gender'
+                        }
+                    }
+                }
+            }
+    });
+   
+
+    // Data from Laravel Blade
+    let cs = 0;
+    let me = 0;
+    let other = 0;
+    rawData.forEach(student => {
+        if (student.dept === 'CS') {
+            cs++;
+        } else if (student.dept === 'ME') {
+            me++;
+        }else {
+            other++
+        }
+    });
+
+
+    let departments = ["CS", "ME", "Other"]; 
+    let departmentCounts = [cs, me, other]; 
+
+    // Pie Chart: Department-Wise Student Count (CS, ME, Other)
+    const departmentData = {
+    labels: departments, // Department names
+    datasets: [{
+        label: 'Students per Department',
+        data: departmentCounts, // Total students count per department
+        backgroundColor: [
+        'rgba(255, 99, 132, 0.8)', // Red for CS
+        'rgba(54, 162, 235, 0.8)', // Blue for ME
+        'rgba(255, 159, 64, 0.8)'  // Orange for Other
+        ]
+    }]
+    };
+
+    const departmentChart = new Chart(document.getElementById('departmentChart'), {
+    type: 'pie', // Pie Chart
+    data: departmentData,
+    options: {
+        responsive: true,
+        plugins: {
+        tooltip: {
+            callbacks: {
+            label: function (context) {
+                let total = context.dataset.data.reduce((acc, val) => acc + parseInt(val), 0);
+                let value = context.raw;
+                let percentage = ((value / total) * 100).toFixed(2); // Calculate percentage
+                return `${context.label}: ${percentage}% (${value})`;
+            }
+            }
+        }
+        }
+    }
+    });
+    
+    // This section tracks the distribution of student files into "Attachments" and "No Attachments".
+        let documents = @json($studentFile); 
+        let nullAttachments = @json($nullAttachments);
+        const attachmentCounts = [documents, nullAttachments]; // Corrected variable name
+
+        // Pie Chart: Attachments Distribution
+        const attachmentData = {
+        labels: ['Documents', 'No Attachment'],
+        datasets: [{
+            label: 'Attachments',
+            data: attachmentCounts, // Distribution of attachment types
+            backgroundColor: [
+            'rgba(255, 99, 132, 0.8)',
+            'rgba(54, 162, 235, 0.8)',
+            ]
+        }]
+        };
+
+        const attachmentChart = new Chart(document.getElementById('attachmentChart'), {
+            type: 'pie',
+            data: attachmentData,
+            options: {
+                responsive: true
+            }
+        });
 
     </script>
 </body>
