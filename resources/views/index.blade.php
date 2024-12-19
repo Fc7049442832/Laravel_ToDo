@@ -130,7 +130,7 @@
           </div>
         
           <div class="chart-container" style="max-width: 400px; margin: 0 auto;">
-            <h2>Bubble Chart: Students by Department</h2>
+            <h2>Pie Chart: Students by Department</h2>
             <canvas id="departmentChart"></canvas>
           </div>
         
@@ -141,9 +141,6 @@
         <hr>
         <button class="close-btn" onclick="closeVisualization()">Close</button>
     </div>
-
-
-
     {{--  All data delete Button --}}
     <form id="delete-form" action="{{ route('deleteAllDataWithPassword') }}" method="POST">
         @csrf
@@ -565,7 +562,6 @@
             other++
         }
     });
-
 
     let departments = ["CS", "ME", "Other"]; 
     let departmentCounts = [cs, me, other]; 
